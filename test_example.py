@@ -26,7 +26,7 @@ class UnitTestExample(unittest.TestCase):
         self.assertEqual(book['identifier']['ISBN-10'], "0374530637")
         self.assertEqual(book['identifier']['ISBN-13'], "978-0374530631")
         self.assertEqual(book['identifier']['OCLC'], "256887668")
-        self.assertEqual(book['title'], "Wiseblood")
+        self.assertEqual(book['title'], "Wise Blood")
         self.assertEqual(book['pages'], 238)
         self.assertTrue(book['available'])
         self.assertEqual(book['authors'], ["Flannery O'Connor"])

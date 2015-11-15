@@ -27,7 +27,7 @@ class HttpSim(BaseHTTPRequestHandler):
             self.send_response(200)
             subprocess.call(["kill", str(os.getpid())])
         else:
-            canned_book = {'identifier': {'ISBN-10': "0374530637", 'ISBN-13': "978-0374530631", 'OCLC': "256887668"}, 'title': "Wiseblood", 'pages': 238, 'available': True, 'authors': ["Flannery O'Connor"]}
+            canned_book = {'identifier': {'ISBN-10': "0374530637", 'ISBN-13': "978-0374530631", 'OCLC': "256887668"}, 'title': "Wise Blood", 'pages': 238, 'available': True, 'authors': ["Flannery O'Connor"]}
             response_body = json.dumps(canned_book)
             self.send_response(200)
             self.send_header("Content-Type", "application_json")
