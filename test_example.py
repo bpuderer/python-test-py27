@@ -31,6 +31,13 @@ class UnitTestExample(unittest.TestCase):
         self.assertTrue(book['available'])
         self.assertEqual(book['authors'], ["Flannery O'Connor"])
 
+    def test_book_creation(self):
+        """test posting json to the sim and confirming response code"""
+        book = {'identifier': {'ISBN-10': "0374530874", 'ISBN-13': "978-0374530877", 'OCLC': "170140"}, 'title': "The Violent Bear It Away", 'pages': 243, 'available': True, 'authors': ["Flannery O'Connor"]}
+
+        r = requests.post("http://localhost:1234/", json=book, timeout=5)
+        self.assertEqual(r.status_code, 201)
+        #once sim can store books more assertions and cases will be added
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
