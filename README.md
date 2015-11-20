@@ -8,3 +8,8 @@ test_example.py - example tests using the sim
 asserts.py - assertion examples
 
 custom_assertions.py - custom assertion example and a couple of tests
+
+
+python -m unittest discover
+nosetests
+nosetests --with-xunit
