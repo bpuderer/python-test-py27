@@ -64,8 +64,8 @@ class ThreadedHttpSim(ThreadingMixIn, HTTPServer):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ip", dest="ip", default="localhost")
-    parser.add_argument("--port", dest="port", type=int, default="1234")
+    parser.add_argument("--ip", default="localhost")
+    parser.add_argument("--port", type=int, default="1234")
     args = parser.parse_args()
     IP = args.ip
     PORT = args.port
