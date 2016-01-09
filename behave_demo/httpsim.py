@@ -5,13 +5,15 @@ import argparse
 import os
 import subprocess
 import json
+import re
 
-def duplicate_book(newbk):
-    #duplicate if book exists with same ISBN-10 identifier
-    for book in books['books']:
-        if book['identifier']['ISBN-10'] == newbk['identifier']['ISBN-10']:
-            return True
-    return False
+
+def book_location(isbn10):
+    for i, book in enumerate(library['books']):
+        if book['identifier']['ISBN-10'] == isbn10:
+            return i
+    return -1
+
 
 class HttpSim(BaseHTTPRequestHandler):
 
@@ -22,13 +24,24 @@ class HttpSim(BaseHTTPRequestHandler):
         if parsed_path.path == "/terminate":
             self.send_response(200)
             subprocess.call(["kill", str(os.getpid())])
-        elif parsed_path.path == "/books":
-            response_body = json.dumps(books)
+        elif parsed_path.path == "/books" or parsed_path.path == "/books/":
+            response_body = json.dumps(library)
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.send_header("Content-Length", len(response_body))
             self.end_headers()
             self.wfile.write(response_body)
+        elif re.match('^/books/\S+', parsed_path.path):
+            loc = book_location(parsed_path.path.split('/')[2])
+            if loc > -1:
+                response_body = json.dumps(library['books'][loc])
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", len(response_body))
+                self.end_headers()
+                self.wfile.write(response_body)
+            else:
+                self.send_error(404)
         else:
             self.send_error(404)
         return
@@ -44,11 +57,11 @@ class HttpSim(BaseHTTPRequestHandler):
             return
 
         parsed_path = urlparse(self.path)
-        if parsed_path.path == "/books":
+        if parsed_path.path == "/books" or parsed_path.path == "/books/":
             #assumes valid json in request body
             new_book = json.loads(request_body)
-            if not duplicate_book(new_book):
-                books['books'].append(new_book)
+            if book_location(new_book['identifier']['ISBN-10']) == -1:
+                library['books'].append(new_book)
                 self.send_response(201)
             else:
                 self.send_error(409)
@@ -65,10 +78,17 @@ class HttpSim(BaseHTTPRequestHandler):
     def do_DELETE(self):
 
         parsed_path = urlparse(self.path)
-        if parsed_path.path == "/books":
+        if parsed_path.path == "/books" or parsed_path.path == "/books/":
             #delete all
-            del books['books'][:]
+            del library['books'][:]
             self.send_response(200)
+        elif re.match('^/books/\S+', parsed_path.path):
+            loc = book_location(parsed_path.path.split('/')[2])
+            if loc > -1:
+                del library['books'][loc]
+                self.send_response(200)
+            else:
+                self.send_error(404)
         else:
             self.send_error(404)
         return
@@ -86,7 +106,7 @@ if __name__ == '__main__':
     IP = args.ip
     PORT = args.port
 
-    books = {'books': []}
+    library = {'books': []}
 
     try:
         server = ThreadedHttpSim((IP, PORT), HttpSim)

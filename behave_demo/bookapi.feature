@@ -4,23 +4,23 @@ Feature: Book API
     So that I can create a library app
 
 Scenario: Add a book
-    Given I use ip "localhost" and port "default"
-    When I HTTP POST the path "/books"
+    Given endpoint "/books" and method "post"
+    When the request is executed
     Then the status code is "201"
 
-Scenario: Add a duplicate book
-    Given I use ip "localhost" and port "default"
-    When I HTTP POST the path "/books"
+Scenario: Re-add same book
+    Given endpoint "/books" and method "post"
+    When the request is executed
     Then the status code is "201"
-    When I HTTP POST the path "/books"
+    When the request is executed
     Then the status code is "409"
-
+    
 Scenario: Get all books
-    Given I use ip "localhost" and port "default"
-    When I HTTP GET the path "/books"
+    Given endpoint "/books" and method "get"
+    When the request is executed
     Then the status code is "200"
 
 Scenario: Remove all books
-    Given I use ip "localhost" and port "default"
-    When I HTTP DELETE the path "/books"
+    Given endpoint "/books" and method "delete"
+    When the request is executed
     Then the status code is "200"
