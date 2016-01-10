@@ -32,6 +32,7 @@ class HttpSim(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(response_body)
         elif re.match('^/books/\S+', parsed_path.path):
+            #split takes care of trailing slash
             loc = book_location(parsed_path.path.split('/')[2])
             if loc > -1:
                 response_body = json.dumps(library['books'][loc])
@@ -83,6 +84,7 @@ class HttpSim(BaseHTTPRequestHandler):
             del library['books'][:]
             self.send_response(200)
         elif re.match('^/books/\S+', parsed_path.path):
+            #split takes care of trailing slash
             loc = book_location(parsed_path.path.split('/')[2])
             if loc > -1:
                 del library['books'][loc]
