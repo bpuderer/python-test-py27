@@ -54,3 +54,16 @@ def assert_status_code(context, code):
 @then('"{num_books}" books are returned')
 def assert_status_code(context, num_books):
     assert len(context.r.json()['books']) == int(num_books)
+
+@then('the library contains the book when retrieved individually')
+def assert_books_retrieved(context):
+    for row in context.table:
+        expected_book = {'identifier': {}}
+        expected_book['identifier']['ISBN-10'] = row['isbn10']
+        expected_book['title'] = row['title']
+        url = 'http://' + context.ip + ':' + context.port + '/books/' + row['isbn10']
+        r = requests.get(url, timeout=5)
+        assert r.status_code == 200
+        actual_book = r.json()
+        assert actual_book['identifier']['ISBN-10'] == expected_book['identifier']['ISBN-10']
+        assert actual_book['title'] == expected_book['title']

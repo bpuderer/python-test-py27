@@ -10,6 +10,9 @@ Scenario: Add a book
         |0374530637|Wise Blood|
     When the request is executed
     Then the status code is "201"
+    and the library contains the book when retrieved individually
+        |isbn10    |title     |
+        |0374530637|Wise Blood|
 
 Scenario: Attempt to re-add same book
     Given endpoint "/books" and method "post"

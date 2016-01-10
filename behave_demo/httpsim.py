@@ -42,7 +42,7 @@ class HttpSim(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(response_body)
             else:
-                self.send_error(404)
+                self.send_error(404, "Book not found")
         else:
             self.send_error(404)
         return
@@ -54,25 +54,27 @@ class HttpSim(BaseHTTPRequestHandler):
         if content_len:
             request_body = self.rfile.read(content_len)
         else:
-            self.send_error(400, "no Content-Length header found and this sim does not handle chunked transfer encoding")
+            #chunked transfer encoding not handled
+            self.send_error(400, "non-zero Content-Length header not found")
             return
 
         parsed_path = urlparse(self.path)
         if parsed_path.path == "/books" or parsed_path.path == "/books/":
-            #assumes valid json in request body
-            new_book = json.loads(request_body)
-            if book_location(new_book['identifier']['ISBN-10']) == -1:
-                library['books'].append(new_book)
-                self.send_response(201)
-            else:
-                self.send_error(409)
+            try:
+                new_book = json.loads(request_body)
+                if ('identifier' not in new_book or 'ISBN-10' not in new_book['identifier'] or
+                        'title' not in new_book or not new_book['identifier']['ISBN-10'].strip() or
+                        not new_book['title'].strip()):
+                    self.send_error(400, "Required field missing or has invalid value")
+                elif book_location(new_book['identifier']['ISBN-10']) > -1:
+                    self.send_error(409, "Book exists with passed ISBN-10")
+                else:
+                    library['books'].append(new_book)
+                    self.send_response(201)
+            except ValueError:
+                self.send_error(400, "JSON could not be parsed")
         else:
             self.send_error(404)
-        return
-
-
-    def do_PUT(self):
-        self.send_error(404)
         return
 
 
@@ -90,7 +92,7 @@ class HttpSim(BaseHTTPRequestHandler):
                 del library['books'][loc]
                 self.send_response(200)
             else:
-                self.send_error(404)
+                self.send_error(404, "Book not found")
         else:
             self.send_error(404)
         return
