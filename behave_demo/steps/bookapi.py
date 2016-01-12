@@ -1,53 +1,28 @@
 import requests
+import json
 
 
-@given('endpoint "{path}" and method "{method}"')
-def endpoint_and_method(context, path, method):
-    context.path = path
-    context.http_method = method
+@given('endpoint "{path}" is available')
+def endpoint_available(context, path):
+    r = requests.head(context.base_url + path, timeout=5)
+    assert r.status_code == 200
 
-@given('the endpoint includes the id "{bookid}"')
-@when('the endpoint includes the id "{bookid}"')
-def add_id_to_endpoint(context, bookid):
-    if context.path[-1] == "/":
-        context.path += bookid
-    else:
-        context.path += ("/" + bookid)
+@when('I HTTP POST "{path}" with JSON data')
+def http_post(context, path):
+    url = context.base_url + path
+    context.r = requests.post(url, json=json.loads(context.text), timeout=5)
 
-@given('the payload includes the book')
-@when('the payload includes the book')
-def add_book_to_payload(context):
-    if context.table:
-        book = {'identifier': {}}
-        book['identifier']['ISBN-10'] = context.table[0]['isbn10']
-        book['title'] = context.table[0]['title']
-        context.payload = book
+@when('I HTTP GET "{path}"')
+def http_get(context, path):
+    url = context.base_url + path
+    context.r = requests.get(url, timeout=5)
 
-@when('the endpoint is "{path}"')
-def http_endpoint(context, path):
-    context.path = path
+@when('I HTTP DELETE "{path}"')
+def http_delete(context, path):
+    url = context.base_url + path
+    context.r = requests.delete(url, timeout=5)
 
-@when('the method is "{method}"')
-def http_method(context, method):
-    context.http_method = method
-
-
-@when('the request is executed')
-def make_http_request(context):
-    url = 'http://' + context.ip + ':' + context.port + context.path
-
-    #temporary
-    #canned_book = {'identifier': {'ISBN-10': "0374530637", 'ISBN-13': "978-0374530631", 'OCLC': "256887668"}, 'title': "Wise Blood", 'pages': 238, 'available': True, 'authors': ["Flannery O'Connor"]}
-
-    if context.http_method.lower() == "get":
-        context.r = requests.get(url, timeout=5)
-    elif context.http_method.lower() == "post":
-        context.r = requests.post(url, json=context.payload, timeout=5)
-    elif context.http_method.lower() == "delete":
-        context.r = requests.delete(url, timeout=5)
-
-
-@then('the status code is "{code}"')
+@then('the HTTP response status code is "{code}"')
 def assert_status_code(context, code):
     assert context.r.status_code == int(code)
 
@@ -55,15 +30,8 @@ def assert_status_code(context, code):
 def assert_status_code(context, num_books):
     assert len(context.r.json()['books']) == int(num_books)
 
-@then('the library contains the book when retrieved individually')
-def assert_books_retrieved(context):
-    for row in context.table:
-        expected_book = {'identifier': {}}
-        expected_book['identifier']['ISBN-10'] = row['isbn10']
-        expected_book['title'] = row['title']
-        url = 'http://' + context.ip + ':' + context.port + '/books/' + row['isbn10']
-        r = requests.get(url, timeout=5)
-        assert r.status_code == 200
-        actual_book = r.json()
-        assert actual_book['identifier']['ISBN-10'] == expected_book['identifier']['ISBN-10']
-        assert actual_book['title'] == expected_book['title']
+@then('the response body contains the JSON data')
+def assert_response_json(context):
+    actual_response = context.r.json()
+    expected_response = json.loads(context.text)
+    assert actual_response == expected_response

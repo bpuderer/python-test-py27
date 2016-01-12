@@ -71,8 +71,8 @@ class HttpSim(BaseHTTPRequestHandler):
                 else:
                     library['books'].append(new_book)
                     self.send_response(201)
-            except ValueError:
-                self.send_error(400, "JSON could not be parsed")
+            except (ValueError, TypeError):
+                self.send_error(400, "Error parsing JSON")
         else:
             self.send_error(404)
         return
@@ -98,6 +98,16 @@ class HttpSim(BaseHTTPRequestHandler):
         return
 
 
+    def do_HEAD(self):
+
+        parsed_path = urlparse(self.path)
+        if parsed_path.path == "/books" or parsed_path.path == "/books/":
+            self.send_response(200)
+        else:
+            self.send_error(404)
+        return
+
+        
 class ThreadedHttpSim(ThreadingMixIn, HTTPServer):
     """multithread"""
 
