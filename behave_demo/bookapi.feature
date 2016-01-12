@@ -133,3 +133,94 @@ Scenario: Remove all books when some exist
     Then the HTTP response status code is "200"
     When I HTTP GET "/books"
     Then "0" books are returned
+
+
+
+Scenario: Attempt to add a book with invalid JSON fields
+    Given endpoint "/books" is available
+    When I HTTP POST "/books" with JSON data:
+        """
+        {
+            "identifier": {
+                "ISBN-13": "978-0374530631"
+            },
+            "title": "Wise Blood"
+        }
+        """
+    Then the HTTP response status code is "400"
+    When I HTTP POST "/books" with JSON data:
+        """
+        {
+            "identifier": {
+                "ISBN-10": null
+            },
+            "title": "Wise Blood"
+        }
+        """
+    Then the HTTP response status code is "400"
+    When I HTTP POST "/books" with JSON data:
+        """
+        {
+            "identifier": {
+                "ISBN-10": "           "
+            },
+            "title": "Wise Blood"
+        }
+        """
+    Then the HTTP response status code is "400"
+    When I HTTP POST "/books" with JSON data:
+        """
+        {
+            "identifier": {
+                "ISBN-10": 3745306370
+            },
+            "title": "Wise Blood"
+        }
+        """
+    Then the HTTP response status code is "400"
+    When I HTTP POST "/books" with JSON data:
+        """
+        {
+            "title": "Wise Blood"
+        }
+        """
+    Then the HTTP response status code is "400"
+    When I HTTP POST "/books" with JSON data:
+        """
+        {
+            "identifier": {
+                "ISBN-10": "0374530637"
+            }
+        }
+        """
+    Then the HTTP response status code is "400"
+    When I HTTP POST "/books" with JSON data:
+        """
+        {
+            "identifier": {
+                "ISBN-10": "0374530637"
+            },
+            "title": null
+        }
+        """
+    Then the HTTP response status code is "400"
+    When I HTTP POST "/books" with JSON data:
+        """
+        {
+            "identifier": {
+                "ISBN-10": "0374530637"
+            },
+            "title": ""
+        }
+        """
+    Then the HTTP response status code is "400"
+    When I HTTP POST "/books" with JSON data:
+        """
+        {
+            "identifier": {
+                "ISBN-10": "0374530637"
+            },
+            "title": []
+        }
+        """
+    Then the HTTP response status code is "400"

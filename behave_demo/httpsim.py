@@ -71,7 +71,7 @@ class HttpSim(BaseHTTPRequestHandler):
                 else:
                     library['books'].append(new_book)
                     self.send_response(201)
-            except (ValueError, TypeError):
+            except (ValueError, TypeError, AttributeError):
                 self.send_error(400, "Error parsing JSON")
         else:
             self.send_error(404)
