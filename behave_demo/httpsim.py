@@ -1,6 +1,6 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from SocketServer import ThreadingMixIn
-from urlparse import urlparse, parse_qs
+from urlparse import urlparse
 import argparse
 import os
 import subprocess
@@ -31,7 +31,7 @@ class HttpSim(BaseHTTPRequestHandler):
             self.send_header("Content-Length", len(response_body))
             self.end_headers()
             self.wfile.write(response_body)
-        elif re.match('^/books/\S+', parsed_path.path):
+        elif re.match(r'/books/\S+', parsed_path.path):
             #split takes care of trailing slash
             loc = book_location(parsed_path.path.split('/')[2])
             if loc > -1:
@@ -85,7 +85,7 @@ class HttpSim(BaseHTTPRequestHandler):
             #delete all
             del library['books'][:]
             self.send_response(200)
-        elif re.match('^/books/\S+', parsed_path.path):
+        elif re.match(r'/books/\S+', parsed_path.path):
             #split takes care of trailing slash
             loc = book_location(parsed_path.path.split('/')[2])
             if loc > -1:
@@ -107,7 +107,7 @@ class HttpSim(BaseHTTPRequestHandler):
             self.send_error(404)
         return
 
-        
+
 class ThreadedHttpSim(ThreadingMixIn, HTTPServer):
     """multithread"""
 
