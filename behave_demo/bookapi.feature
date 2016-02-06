@@ -14,17 +14,6 @@ Scenario: Add a book
         }
         """
     Then the HTTP response status code is "201"
-    When I HTTP GET "/books/0374530637"
-    Then the HTTP response status code is "200"
-    and the response body contains the JSON data:
-        """
-        {
-            "identifier": {
-                "ISBN-10": "0374530637"
-            },
-            "title": "Wise Blood"
-        }
-        """
 
 Scenario: Attempt to re-add same book
     Given endpoint "/books" is available
@@ -47,6 +36,29 @@ Scenario: Attempt to re-add same book
         }
         """
     Then the HTTP response status code is "409"
+
+Scenario: Retrieve a book
+    Given endpoint "/books" is available
+    When I HTTP POST "/books" with JSON data:
+        """
+        {
+            "identifier": {
+                "ISBN-10": "0374530637"
+            },
+            "title": "Wise Blood"
+        }
+        """
+    and I HTTP GET "/books/0374530637"
+    Then the HTTP response status code is "200"
+    and the response body contains the JSON data:
+        """
+        {
+            "identifier": {
+                "ISBN-10": "0374530637"
+            },
+            "title": "Wise Blood"
+        }
+        """
 
 Scenario: Attempt to retrieve a book that does not exist
     Given endpoint "/books" is available
