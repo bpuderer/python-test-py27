@@ -108,6 +108,14 @@ class HttpSim(BaseHTTPRequestHandler):
         return
 
 
+    def do_OPTIONS(self):
+
+        self.send_response(200)
+        self.send_header("Allow", "GET,POST,DELETE,HEAD,OPTIONS")
+        self.end_headers()
+        return
+
+
 class ThreadedHttpSim(ThreadingMixIn, HTTPServer):
     """multithread"""
 
