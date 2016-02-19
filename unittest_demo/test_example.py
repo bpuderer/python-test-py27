@@ -38,10 +38,10 @@ class UnitTestExample(unittest.TestCase):
 
     def test_book_retrieval(self):
         """verify retrieving a book"""
-        url = "http://localhost:1234/books/"
+        url = "http://localhost:1234/books"
         book = {'identifier': {'ISBN-10': "0374530874"}, 'title': "The Violent Bear It Away"}
         requests.post(url, json=book, timeout=5)
-        r = requests.get(url + book['identifier']['ISBN-10'], timeout=5)
+        r = requests.get(url + '/' + book['identifier']['ISBN-10'], timeout=5)
         res_body = r.json()
         self.assertEqual(r.status_code, 200)
         self.assertEqual(res_body['identifier']['ISBN-10'], book['identifier']['ISBN-10'])
@@ -76,12 +76,12 @@ class UnitTestExample(unittest.TestCase):
 
     def test_book_removal(self):
         """verify removing a book"""
-        url = "http://localhost:1234/books/"
+        url = "http://localhost:1234/books"
         book = {'identifier': {'ISBN-10': "0374530874"}, 'title': "The Violent Bear It Away"}
         requests.post(url, json=book, timeout=5)
-        r = requests.delete(url + book['identifier']['ISBN-10'], timeout=5)
+        r = requests.delete(url + '/' + book['identifier']['ISBN-10'], timeout=5)
         self.assertEqual(r.status_code, 200)
-        r = requests.get(url + book['identifier']['ISBN-10'], timeout=5)
+        r = requests.get(url + '/' + book['identifier']['ISBN-10'], timeout=5)
         self.assertEqual(r.status_code, 404)
 
     def test_remove_all_books_empty(self):
