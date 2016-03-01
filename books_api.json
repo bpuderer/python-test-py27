@@ -85,6 +85,13 @@
             "delete": {
                 "description": "Remove book",
                 "operationId": "deleteBook",
+                "parameters": [{
+                    "description": "ISBN-10 of book to delete",
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "type": "string"
+                }],
                 "responses": {
                     "200": {
                         "description": "Successfully removed book"
