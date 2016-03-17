@@ -3,6 +3,19 @@ import unittest
 
 class AssertionExamples(unittest.TestCase):
 
+    def assert_dict_contains_subset(self, a, b):
+        for key in a:
+            if key not in b:
+                raise AssertionError("did not find key '{}' in {}".format(key, b))
+            elif a[key] != b[key]:
+                raise AssertionError("value of key '{}' does not match.  {} != {}".format(key, a[key], b[key]))
+
+    def assert_sequence_contains_subset(self, a, b):
+        for item in a:
+            if item not in b:
+                raise AssertionError("did not find '{}' in {}".format(item, b))
+
+
     def test_sequences_same(self):
         list_a = [0, 1, 2]
         list_b = [0, 1, 2]
@@ -14,7 +27,7 @@ class AssertionExamples(unittest.TestCase):
         list_a = [0, 1, 1]
         list_b = [1, 0, 1]
         # same elements in same quantity but order not checked
-        # changed to assertCountEqual in python3
+        # changed to assertCountEqual in python 3
         self.assertItemsEqual(list_a, list_b)
 
     def test_sequences_count_irrelevant(self):
@@ -30,12 +43,47 @@ class AssertionExamples(unittest.TestCase):
         # dicts have exactly same key/val pairs
         self.assertEqual(dict_a, dict_b)
 
-    def test_dicts_subset(self):
+    def test_dicts_subset1(self):
         dict_a = {'a': 0, 'b': 1, 'c': 2}
-        dict_b = {'b': 1, 'c': 2, 'a': 0, 'bb': 11, 'cc': 22}
-        # confirms all key/val pairs in first arg exist in second
-        # reversing the order of the args would fail unless they're the same
+        dict_b = {'a': 0, 'b': 1, 'c': 2, 'bb': 11, 'cc': 22}
+        # confirms all key/val pairs in first exist in second
+        # reversing the order of the args would fail unless they're equal
+        # assertDictContainsSubset was removed from python 3.3+ with no replacement
         self.assertDictContainsSubset(dict_a, dict_b)
+
+    def test_dicts_subset2(self):
+        dict_a = {'a': 0, 'b': 1, 'c': 2}
+        dict_b = {'a': 0, 'b': 1, 'c': 2, 'bb': 11, 'cc': 22}
+        # confirms all key/val pairs in first exist in second
+        # same test but does not use assertDictContainsSubset
+        # AssertionError msg isn't very helpful however
+        self.assertTrue(set(dict_a.items()).issubset(set(dict_b.items())))
+
+    def test_dicts_subset3(self):
+        dict_a = {'a': 0, 'b': 1, 'c': 2}
+        dict_b = {'a': 0, 'b': 1, 'c': 2, 'bb': 11, 'cc': 22}
+        # confirms all key/val pairs in first exist in second
+        # another way with a custom assertion and a more useful message
+        self.assert_dict_contains_subset(dict_a, dict_b)
+
+    def test_dicts_keys(self):
+        dict_a = {'a': 0, 'b': 1, 'c': 2}
+        dict_b = {'b': 'abc', 'c': True, 'a': 42}
+        # check keys in two dictionaries are the same
+        self.assertItemsEqual(dict_a.keys(), dict_b.keys())
+
+    def test_dicts_keys_subset1(self):
+        dict_a = {'a': 0, 'b': 1, 'c': 2}
+        dict_b = {'b': 42, 'c': 'doctor', 'a': False, 'bb': 11, 'cc': 22}
+        # check keys in first dictionary are a subset of second
+        self.assertTrue(set(dict_a).issubset(set(dict_b)))
+
+    def test_dicts_keys_subset2(self):
+        dict_a = {'a': 0, 'b': 1, 'c': 2}
+        dict_b = {'b': 42, 'c': 'doctor', 'a': False, 'bb': 11, 'cc': 22}
+        # check keys in first dictionary are a subset of second
+        # another way with a custom assertion and a more useful message
+        self.assert_sequence_contains_subset(dict_a, dict_b)
 
     def test_membership(self):
         a_list = [42, 3.14, 1.21, 2112, 2001]
