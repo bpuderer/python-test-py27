@@ -111,6 +111,28 @@ class AssertionExamples(unittest.TestCase):
             with open('idontexist.txt') as f:
                 pass
 
+    def test_check_all_for_failure(self):
+        """tests stop after first failure but can continue with the
+        subTest context manager.  it was added in python 3.4
+        but has not been backported to 2.7.
+        this is ugly but can accomplish something similar.
+        regardless of how many AssertionErrors are raised, it will
+        only count as a failure (assuming at least one AssertionError).
+        """
+        failed = False
+        failures = []
+
+        #test_values = range(12)
+        test_values = range(0, 12, 2)
+        for val in test_values:
+            try:
+                self.assertEqual(val % 2, 0)
+            except AssertionError:
+                failed = True
+                failures.append('{} is not even'.format(val))
+        if failed:
+            raise AssertionError(failures)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
