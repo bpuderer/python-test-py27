@@ -115,9 +115,13 @@ class AssertionExamples(unittest.TestCase):
         """tests stop after first failure but can continue with the
         subTest context manager.  it was added in python 3.4
         but has not been backported to 2.7.
-        this is ugly but can accomplish something similar.
-        regardless of how many AssertionErrors are raised, it will
-        only count as a failure (assuming at least one AssertionError).
+        https://docs.python.org/3/library/unittest.html#distinguishing-test-iterations-using-subtests
+
+        the code below is ugly but accomplishes something similar.
+        it asserts everything in test_values and compiles the failures
+        which are listed with the AssertionError.
+        whether one assert fails or all of them fail, this test will
+        report a single failure.
         """
         failed = False
         failures = []
