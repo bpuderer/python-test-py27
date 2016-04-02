@@ -30,6 +30,12 @@ Some ways the tests can be run:
 
 `nosetests --with-xunit`
 
+`green`
+
+`green -v`
+
+`green -vv`
+
 
 ## behave_demo
 

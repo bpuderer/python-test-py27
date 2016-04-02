@@ -56,6 +56,20 @@ class AssertionExamples(unittest.TestCase):
         # https://docs.python.org/2/library/stdtypes.html#types-set
         self.assertEqual(set(list_a), set(list_b))
 
+    def test_sequence_subset1(self):
+        list_a = [0, 1, 2, 3, 8]
+        list_b = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        # all elements in a exist in b
+        # AssertionError msg isn't very helpful
+        self.assertTrue(set(list_a).issubset(set(list_b)))
+
+    def test_sequence_subset2(self):
+        list_a = [0, 1, 2, 3, 8]
+        list_b = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        # all elements in a exist in b
+        # custom assert for better AssertionError msg
+        self.assert_sequence_contains_subset(list_a, list_b)
+
 
     def test_dicts_same(self):
         dict_a = {'a': 0, 'b': 1, 'c': 2}
