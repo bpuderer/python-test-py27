@@ -185,9 +185,8 @@ class AssertionExamples(unittest.TestCase):
         failed = False
         failures = []
 
-        #test_values = range(12)
-        test_values = range(0, 12, 2)
-        for val in test_values:
+        #for val in range(12):
+        for val in range(0, 12, 2):
             try:
                 self.assertEqual(val % 2, 0)
             except AssertionError:
