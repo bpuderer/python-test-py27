@@ -73,6 +73,13 @@ class HttpSim(BaseHTTPRequestHandler):
                     self.send_response(201)
             except (ValueError, TypeError, AttributeError):
                 self.send_error(400, "Error parsing JSON")
+        elif parsed_path.path == "/echoxml" or parsed_path.path == "/echoxml/":
+            response_body = request_body
+            self.send_response(200)
+            self.send_header("Content-Type", "text/xml")
+            self.send_header("Content-Length", len(response_body))
+            self.end_headers()
+            self.wfile.write(response_body)
         else:
             self.send_error(404)
         return
