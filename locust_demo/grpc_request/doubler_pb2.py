@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='doubler.proto',
   package='',
   syntax='proto3',
-  serialized_pb=_b('\n\rdoubler.proto\"\x17\n\x06Number\x12\r\n\x05value\x18\x01 \x01(\x02\x32\'\n\x07\x44oubler\x12\x1c\n\x06\x44ouble\x12\x07.Number\x1a\x07.Number\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\rdoubler.proto\"\x17\n\x06Number\x12\r\n\x05value\x18\x01 \x01(\x02\x32L\n\x07\x44oubler\x12\x1c\n\x06\x44ouble\x12\x07.Number\x1a\x07.Number\"\x00\x12#\n\rAnotherDouble\x12\x07.Number\x1a\x07.Number\"\x00\x62\x06proto3')
 )
 
 
@@ -74,12 +74,21 @@ _DOUBLER = _descriptor.ServiceDescriptor(
   index=0,
   options=None,
   serialized_start=42,
-  serialized_end=81,
+  serialized_end=118,
   methods=[
   _descriptor.MethodDescriptor(
     name='Double',
     full_name='Doubler.Double',
     index=0,
+    containing_service=None,
+    input_type=_NUMBER,
+    output_type=_NUMBER,
+    options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='AnotherDouble',
+    full_name='Doubler.AnotherDouble',
+    index=1,
     containing_service=None,
     input_type=_NUMBER,
     output_type=_NUMBER,

@@ -19,6 +19,11 @@ class DoublerStub(object):
         request_serializer=doubler__pb2.Number.SerializeToString,
         response_deserializer=doubler__pb2.Number.FromString,
         )
+    self.AnotherDouble = channel.unary_unary(
+        '/Doubler/AnotherDouble',
+        request_serializer=doubler__pb2.Number.SerializeToString,
+        response_deserializer=doubler__pb2.Number.FromString,
+        )
 
 
 class DoublerServicer(object):
@@ -32,11 +37,23 @@ class DoublerServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def AnotherDouble(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_DoublerServicer_to_server(servicer, server):
   rpc_method_handlers = {
       'Double': grpc.unary_unary_rpc_method_handler(
           servicer.Double,
+          request_deserializer=doubler__pb2.Number.FromString,
+          response_serializer=doubler__pb2.Number.SerializeToString,
+      ),
+      'AnotherDouble': grpc.unary_unary_rpc_method_handler(
+          servicer.AnotherDouble,
           request_deserializer=doubler__pb2.Number.FromString,
           response_serializer=doubler__pb2.Number.SerializeToString,
       ),
